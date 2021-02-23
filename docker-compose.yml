@@ -2,21 +2,16 @@ version: "3"
 
 services:
   db:
+    image: mysql:5.7
     container_name: database
-    image: mysql:8
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: sample
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      TZ: Asia/Tokyo
     ports:
-      - 3308:3306
+      - '3310:3306'
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
-      - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./database/data:/var/lib/mysql
-      - ./database/sql:/docker-entrypoint-initdb.d
+      - mysql-data:/var/lib/mysql
+      - gem_data:/usr/local/bundle
 
   api:
     container_name: back
@@ -42,3 +37,9 @@ services:
     command: 'yarn dev'
     ports:
       - "4001:3000"
+
+volumes:
+  mysql-data:
+    driver: local
+  gem_data:
+    driver: local
